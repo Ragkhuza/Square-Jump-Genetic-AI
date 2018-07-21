@@ -1,49 +1,63 @@
-var screenSize;
-var ground;
-var jumping;
-var jumpHeight = 90;
-var player;
-var obstaclesToSpawn;
-var obstaclesArray;
-var lastObstaclesX;
-var obstaclesSpeed;
-var gravity = 1;
-var jumpSpeed;
-var dead;
-var score;
+let screenSize;
+let ground;
+let jumping;
+let jumpHeight = 90;
+let player;
+let players = [];
+let obstaclesToSpawn;
+let obstaclesArray;
+let lastObstaclesX;
+let obstaclesSpeed;
+let initialGravity = 3;
+let gravity;
+let jumpSpeed;
+let dead;
+let score;
+let obsClass;
+let generation = 0;
 
 function setup() {
   screenSize = createCanvas(windowWidth / 2, windowHeight / 2);
   ground = screenSize.height/1.5 - 30;
-  player = createVector(30, ground);
+  // player = createVector(30, ground);
   lastObstaclesX = screenSize.width;
   obstaclesArray = [];
+  gravity = initialGravity;
   jumping = false;
   jumpSpeed = 10;
   score = 0;
   dead = false;
   obstaclesSpeed = 4;
   obstaclesToSpawn = 2;
+  obsClass = new Obstacles();
+  for (var i = 0; i < 100; i++) {
+    players[i] = new Population();
+  }
+  generation++;
 }
 
 function draw() {
   // console.log('player X:Y ', player.x, ' : ', player.y);
-  if (!dead) {
+  // if (!dead) {
     background(100);
     drawGround();
-    drawPlayer();
-    gravityPull();
-    obstacles();
+    // drawPlayer();
+    // gravityPull();
+    if(checkEachPlayer()) {
+      console.log('all players is dead');
+      setup();
+    }
+    obsClass.showObstacles();
     info();
-  } else {
-    showDead();
-  }
+  // } else {
+  //   showDead();
+  // }
 }
 
 function keyTyped() {
   if (key === 'w') {
     jumpHeight = 150;
-    jump();
+    players[0].jump();
   } else if (key === 'r') {
     setup();
   }
@@ -52,7 +66,7 @@ function keyTyped() {
 function keyPressed() {
     if (keyCode === 32) {
       jumpHeight = 90;
-        jump();
+        players[0].jump();
     }
 }
 
@@ -61,46 +75,45 @@ function drawGround() {
   line(0, screenSize.height/1.5, screenSize.width, screenSize.height/1.5);
 }
 
-function drawPlayer() {
-  rect(30, player.y, 20, 30);
-
-  // jump if jumping is true
-  if (jumping) {
-    player.sub(0, jumpSpeed + (obstaclesSpeed * 0.1));
-  }
+function drawPlayer(player) {
+    rect(30, player.pos.y, 20, 30);
+    // jump if jumping is true
+    if (player.jumping) {
+      player.pos.sub(0, jumpSpeed + (obstaclesSpeed * 0.1));
+    }
 }
 
-// set jump to true
-function jump() {
-  if (grounded()) {
-    jumping = true;
-  }
-}
+// // set jump to true
+// function jump(player) {
+//   if (grounded(player)) {
+//     player.jumping = true;
+//   }
+// }
+//
+// // check if player is in the ground
+// function grounded(player) {
+//   if (player.pos.y < ground) {
+//     return false;
+//   } else {
+//     return true;
+//   }
+// }
 
-// check if player is in the ground
-function grounded() {
-  if (player.y < ground) {
-    return false;
-  } else {
-    return true;
-  }
-}
-
-function gravityPull() {
+function gravityPull(player) {
   // stop the jumping
-  if (player.y < ground - jumpHeight) {
-    jumping = false;
+  if (player.pos.y < ground - jumpHeight) {
+    player.jumping = false;
   }
 
   // pull player to ground
-  if (player.y < ground) {
-    gravity += 0.01 + (obstaclesSpeed * 0.02); // make gravity higher as time pass by
-    if (!jumping) {
-      player.y += gravity;
+  if (player.pos.y < ground) {
+    // gravity += 0.05 + (obstaclesSpeed * 0.02); // make gravity higher as time pass by
+    if (!player.jumping) {
+      player.pos.y += gravity;
     }
   } else {
-    gravity = 1;
-    player.y = ground;
+    gravity = initialGravity;
+    player.pos.y = ground;
   }
 }
 
@@ -108,4 +121,17 @@ function gravityPull() {
 function showDead() {
   textSize(20);
   text('You are dead, press R to restart', screenSize.width / 6, screenSize.height / 4);
+}
+
+function checkEachPlayer() {
+  let allDead = true;
+  for (var i = 0; i < players.length; i++) {
+    if (!players[i].dead) {
+      drawPlayer(players[i]);
+      gravityPull(players[i]);
+      obsClass.checkCollision(players[i]);
+      allDead = false;
+    }
+  }
+  return allDead;
 }

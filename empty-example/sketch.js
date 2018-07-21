@@ -13,6 +13,7 @@ let gravity;
 let jumpSpeed;
 let dead;
 let score;
+let highScore = 0;
 let obsClass;
 let generation = 0;
 
@@ -31,7 +32,7 @@ function setup() {
   obstaclesToSpawn = 2;
   obsClass = new Obstacles();
   for (var i = 0; i < 100; i++) {
-    players[i] = new Population();
+    players[i] = new Player();
   }
   generation++;
 }
@@ -41,11 +42,11 @@ function draw() {
   // if (!dead) {
     background(100);
     drawGround();
-    // drawPlayer();
-    // gravityPull();
-    if(checkEachPlayer()) {
+    if(checkEachPlayer()) { // updates each player and check if all players is dead
       console.log('all players is dead');
       setup();
+    } else if(score > highScore) { // else if all players is dead check if score is higher the highscore
+      highScore = Math.round(score); // if so set a new highscore
     }
     obsClass.showObstacles();
     info();
@@ -83,22 +84,6 @@ function drawPlayer(player) {
     }
 }
 
-// // set jump to true
-// function jump(player) {
-//   if (grounded(player)) {
-//     player.jumping = true;
-//   }
-// }
-//
-// // check if player is in the ground
-// function grounded(player) {
-//   if (player.pos.y < ground) {
-//     return false;
-//   } else {
-//     return true;
-//   }
-// }
-
 function gravityPull(player) {
   // stop the jumping
   if (player.pos.y < ground - jumpHeight) {
@@ -131,6 +116,7 @@ function checkEachPlayer() {
       gravityPull(players[i]);
       obsClass.checkCollision(players[i]);
       allDead = false;
+      players[i].run(obstaclesArray);
     }
   }
   return allDead;

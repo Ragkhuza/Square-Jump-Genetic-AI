@@ -1,12 +1,12 @@
 class Obstacles {
   showObstacles() {
+    this.createObstacles();
     this.drawObstacles();
     this.moveObstacles();
-    this.createObstacles();
     this.deleteObstacles();
   }
 
-  createObstacles() {
+  createObstacles() { // what do you think this do?
     for (let i = 0; i < obstaclesToSpawn; i++) {
       obstaclesToSpawn--;
       obstaclesArray.push(createVector(screenSize.width - 32 + (Math.floor(Math.random() * 1000) + 200) +  lastObstaclesX / 2, screenSize.height/1.5 - 30));
@@ -16,13 +16,13 @@ class Obstacles {
     }
   }
 
-  drawObstacles() {
+  drawObstacles() { // what do you think this do?
     for (let i = 0; i < obstaclesArray.length; i++) {
       rect(obstaclesArray[i].x, obstaclesArray[i].y, 30, 30);
     }
   }
 
-  deleteObstacles() {
+  deleteObstacles() { // what do you think this do?
     for (let i = 0; i < obstaclesArray.length; i++) {
       if (obstaclesArray[i].x < -60) {
         obstaclesToSpawn++;
@@ -31,13 +31,13 @@ class Obstacles {
     }
   }
 
-  moveObstacles() {
+  moveObstacles() { // what do you think this do?
     for (let i = 0; i < obstaclesArray.length; i++) {
       obstaclesArray[i].sub(obstaclesSpeed, 0);
     }
   }
 
-  checkCollision(player) {
+  checkCollision(player) { // what do you think this do?
     for (let i = 0; i < obstaclesArray.length; i++) {
       if (obstaclesArray[i].x < player.pos.x + 13 && obstaclesArray[i].x + 30 > player.pos.x) {
         if (player.pos.y <= ground && player.pos.y > ground - 24) {
@@ -45,7 +45,7 @@ class Obstacles {
           player.score = score;
           player.pos.y = 0;
           player.pos.x = 0;
-          console.log('player', i, ': got a score of ', score);
+          playersAlive--;
         }
       }
     }

@@ -2,13 +2,20 @@ function info() {
   calcScore();
   showScore();
   showSpeed();
-  showAlive();
+  if (!realPlayers) {
+    showAlive();
+    showGen();
+  }
+
+}
+
+function  showGen() {
+  text('Gen#: ' + generation, screenSize.width - 120, 30);
 }
 
 function showScore() {
   textSize(15);
   text('Score: ' + int(score), 30, 30);
-  text('Gen#: ' + generation, screenSize.width - 120, 30);
   text('Best Score: ' + highScore, screenSize.width / 3, 30);
 }
 

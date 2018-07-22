@@ -16,6 +16,7 @@ class Player {
   }
 
   run(obs) { // brain
+    if (realPlayers) {return false}
     for (let i = 0; i < obs.length; i++) {
       let njd = this.dna.genes[0] + (obstaclesSpeed * 2); // normalJumpDistance
       if (obs[i].x - this.pos.x < njd) { // if we are about to hit obstacle
@@ -25,7 +26,7 @@ class Player {
         if (obs[1]) obs2 = obs[1].x;
         let d = Math.abs(obs1 - obs2);
 
-        let bjd = njd * 2 - (obstaclesSpeed * 2); // when to do a big Jump?
+        let bjd = njd * 1.7 + (obstaclesSpeed * 2); // when to do a big Jump?
         if (d < bjd) { // if two obstacles are close together
           this.bigJump(); // do a bigjump
           // console.log('A player did a big jump');
@@ -63,6 +64,11 @@ class Player {
 
   calcFitness() {
     this.fitness = this.score;
+    if (this.score > 1000) {
+      this.fitness = pow(this.fitness, Math.floor(this.score / 1000));
+    } else if (this.score < 200) {
+      this.fitness = this.fitness / 2;
+    }
   }
 
   getDNA() {

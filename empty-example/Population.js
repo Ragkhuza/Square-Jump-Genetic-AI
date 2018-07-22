@@ -50,7 +50,7 @@ class Population {
 
     // pull player to ground
     if (player.pos.y < ground) {
-      player.gravity += 0.005 + (int(obstaclesSpeed * 0.01)); // make gravity higher as time pass by
+      player.gravity += 0.005 + (int(obstaclesSpeed * 0.1)); // make gravity higher as time pass by
       if (!player.jumping) {
         player.pos.y += player.gravity;
       }
@@ -113,7 +113,7 @@ class Population {
       let clone = int(normalizedFitness * 100); // number of times this player will be put into matingPool
 
       for (var j = 0; j < clone; j++) {
-        this.matingPool.push(players[j]);
+        this.matingPool.push(players[i]);
       }
     }
     // console.log(this.matingPool);
@@ -123,19 +123,19 @@ class Population {
     pass[0] = pass[1] = pass[2] = pass[4] = pass[5] = false; // [DEBUG] for debugging purposes only
     for (var i = 0; i < players.length; i++) {
       // pick two random parents
-      // let m = int(random(this.matingPool.length));
+      let m = int(random(this.matingPool.length));
       let d = int(random(this.matingPool.length));
 
-      // let mom = this.matingPool[m];
+      let mom = this.matingPool[m];
       let dad = this.matingPool[d];
 
       // get their genes
-      // let momGenes = mom.getDNA();
+      let momGenes = mom.getDNA();
       let dadGenes = dad.getDNA();
 
       // mate their genes
-      // let childDNA = dadGenes.mates(momGenes);
-      let childDNA = dadGenes.mates(dadGenes);
+      let childDNA = dadGenes.mates(momGenes);
+      // let childDNA = dadGenes.mates(dadGenes);
 
       // mutate their genes
       childDNA.mutate(this.mutationRate);

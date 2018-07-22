@@ -19,6 +19,7 @@ let generation = 1;
 let population;
 let mutationRate = 0.01;
 let playersAlive;
+let realPlayers = true;
 
 let pass = []; // [DEBUG] for debugging purposes in DNA.js mates()
 
@@ -36,8 +37,12 @@ function setup() {
   obstaclesSpeed = 4;
   obstaclesToSpawn = 2;
   obsClass = new Obstacles();
-  if (!population) {
-    population = new Population(100, mutationRate);
+  if (!population || players.length <= 1) { // if we the game didn't start yet or we have 1 realPlayers
+    if (realPlayers) { // if player is real person
+      population = new Population(1, mutationRate);
+    } else { // else load our AI
+      population = new Population(100, mutationRate);
+    }
     console.log('Initialized population');
   }
   playersAlive = 100;
@@ -58,21 +63,26 @@ function draw() {
 
 function keyTyped() {
   if (key === 'w') {
-    jumpHeight = 150;
-    players[0].jump();
+    players[0].bigJump();
   } else if (key === 'r') {
+    players = [];
+    highScore = 0;
     setup();
   } else if (key === 'x') {
     killAll();
+  } else if (key === 't') {
+    highScore = 0;
+    realPlayers = !realPlayers;
+    players = [];
+    setup();
   }
 }
-//
-// function keyPressed() {
-//     if (keyCode === 32) {
-//       jumpHeight = 90;
-//         players[0].jump();
-//     }
-// }
+
+function keyPressed() {
+    if (keyCode === 32) {
+      players[0].jump();
+    }
+}
 
 function drawGround() {
   fill(255);
